@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/distribution.dir/src/dist.cpp.o  -o distribution 

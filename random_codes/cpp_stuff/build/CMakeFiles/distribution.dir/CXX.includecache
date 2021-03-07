@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/kensuke/programming/.projects/learningStatistics/random_codes/cpp_stuff/src/dist.cpp
+iostream
+-
+vector
+-
+string
+-
+cmath
+-
+
