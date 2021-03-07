@@ -9,7 +9,7 @@ After reading this book, I am currently planning to make a C++ package that enab
 
 ## ::::: Dependencies :::::
 - Repository:
-    - https://github.com/ghmagazine/python\_stat\_sample
+    - https://github.com/ghmagazine/python_stat_sample
 
 ## ::::: References :::::
 1. Hiroki Taniai, Pythonで理解する統計解析の基礎 -STATISTICAL ANALYSIS WITH PYTHON-, 技術評論社, 10/05/2018, pp.304
