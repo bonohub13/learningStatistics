@@ -6,6 +6,7 @@ After reading this book, I am currently planning to make a C++ package that enab
 
 ## ::::: How to :::::
 - After cloning this repository, clone the repository mentioned under dependencies under the root directory of this repository.
+- To install the dependencies for python, install via pip with<br/>```pip install -r requirements.txt```<br/>or install via pipenv to containerize the packages with<br/>```pipenv install -r requirements.txt```
 
 ## ::::: Dependencies :::::
 - Repository:
