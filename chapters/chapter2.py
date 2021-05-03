@@ -6,7 +6,7 @@
 #       extension: .py
 #       format_name: light
 #       format_version: '1.5'
-#       jupytext_version: 1.10.3
+#       jupytext_version: 1.11.1
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -132,12 +132,14 @@ summary_df["偏差二乗"] = np.square(deviation)
 summary_df
 
 # ### 標本分散
+#
 # \begin{align*}
 # S^2 = \frac{1}{n} \sum_{i=1}^{n}(x_i - \bar{x})^2 \\
 # (n > 0)
 # \end{align*}
 #
 # ### 不偏分散
+#
 # \begin{align*}
 # \sigma^2 = \frac{1}{n-1} \sum_{i=1}^{n}(x_i - \bar{x})^2 \\
 # (n > 1)
@@ -154,6 +156,7 @@ np.sqrt(np.var(scores, ddof=0)) # 標本分散を使用
 np.std(scores, ddof=0) # 上と同様
 
 # ## 範囲
+#
 # \begin{align*}
 # \it{Rg} = x_{max} - x_{min}
 # \end{align*}
@@ -177,3 +180,140 @@ scores_IQR
 
 # pandas
 pd.Series(scores).describe()
+
+# ## データの正規化
+
+# データから平均を引き, 標準偏差で割る操作を__標準化 (standardization)__という<br/>
+# また, 標準化されたデータを__標準化変量 (standardization data)__や__Zスコア (z-score)__という<br/>
+#
+# \begin{align*}
+# z_i = \frac{x_i - x}{S}
+# \end{align*}
+
+z = (scores - np.mean(scores))/np.std(scores)
+z
+
+np.mean(z), np.std(z, ddof=0)
+
+# ### 標準化されたデータの特徴
+#
+# - 標準化されたデータの平均は0で標準偏差は1になる
+#     - (上記のものではそうなっていないように見えるが, 平均の値が極めて0に近いことから無視できる誤差であると言える)
+# - データと同じ単位をもつ標準偏差で除算していることから, 標準化されたデータは単位を持たない
+
+# ### 偏差値
+#
+# 偏差値は平均が50, 標準偏差が10になるように正規化したデータのことをいう<br/>
+# 数式では以下のように表す
+#
+# \begin{align*}
+# z_i = 50 + 10 \times \frac{x_i - \bar{x}}{S}
+# \end{align*}
+
+z = 50 + 10 * (scores - np.mean(scores))/np.std(scores)
+z
+
+np.mean(z), np.std(z, ddof=0)
+
+scores_df["偏差値"] = z
+scores_df
+
+# ### 1次元データの視覚化
+
+# +
+# 50人分の英語のテストの点数
+english_scores = np.array(df["英語"])
+
+pd.Series(english_scores).describe()
+# -
+
+# #### 度数分布表
+# 分割した区間とデータ数を表にまとめたものを__度数分布表__という
+# - 階級 (class)
+#     - 区間
+# - 階級幅
+#     - 階級の幅
+# - 階級数
+#     - 階級の数
+# - 階級値
+#     - 各階級の中央値
+# - 度数 (frequency)
+#     - 各階級に属しているデータの数
+
+freq, _ = np.histogram(english_scores, bins=10, range=(0, 100))
+freq
+
+freq_class = [f'{i}~{i+10}' for i in range(0, 100, 10)]
+freq_dist_df = pd.DataFrame({"度数":freq}, index=pd.Index(freq_class, name="階級"))
+freq_dist_df
+
+# 階級値
+class_value = [(i+(i+10))//2 for i in range(0, 100, 10)]
+class_value
+
+# ##### 相対度数
+# __相対度数__は全データ数に対してその階級のデータが占めている割合の度数を示す
+
+rel_freq = freq/freq.sum()
+rel_freq
+
+# #### 累積相対度数
+# __累積相対度数__はその階級までの総体度数の和を示す
+
+cum_rel_freq = np.cumsum(rel_freq)
+cum_rel_freq
+
+freq_dist_df["階級値"] = class_value
+freq_dist_df["相対度数"] = rel_freq
+freq_dist_df["累積相対度数"] = cum_rel_freq
+freq_dist_df = freq_dist_df[["階級値", "度数", "相対度数", "累積相対度数"]]
+freq_dist_df
+
+# 度数分布表から再瀕値を求めることで最も度数の高い階級値を求めることができる<br/>
+# _なお, 再瀕値は度数分布表の作り方に大きく依存することを留意する必要がある_
+
+freq_dist_df.loc[freq_dist_df["度数"].idxmax(), "階級値"]
+
+# ### ヒストグラム
+# __ヒストグラム (histogram)__は度数分布表を棒グラフで表したもの
+
+import matplotlib.pyplot as plt
+# %matplotlib inline
+
+# +
+fig = plt.figure(figsize=(10, 6))
+ax = fig.add_subplot(111)
+
+freq, _, _ = ax.hist(english_scores, bins=10, range=(0, 100))
+ax.set_xlabel("点数", )
+ax.set_ylabel("人数")
+ax.set_xticks(np.linspace(0, 100, 10+1))
+ax.set_yticks(np.arange(0, freq.max()+1))
+plt.show()
+# -
+fig = plt.figure(figsize=(10, 6))
+ax = fig.add_subplot(111)
+freq, _, _ = ax.hist(english_scores, bins=25, range=(0, 100))
+ax.set_xlabel("点数", )
+ax.set_ylabel("人数")
+ax.set_xticks(np.linspace(0, 100, 25+1))
+ax.set_yticks(np.arange(0, freq.max()+1))
+plt.show()
+
+# +
+fig = plt.figure(figsize=(10, 6))
+ax1 = fig.add_subplot(111)
+ax2 = ax1.twinx()
+
+weights = np.ones_like(english_scores)/len(english_scores)
+rel_freq, _, _ = ax1.hist(english_scores, bins=25, range=(0, 100), weights=weights)
+cum_rel_freq = np.cumsum(rel_freq)
+class_value = [(i+(i+4))//2 for i in range(0, 100, 4)]
+ax2.plot(class_value, cum_rel_freq, ls='--', marker='o', color='gray')
+ax2.grid(visible=False)
+ax1.set_xlabel("点数")
+ax1.set_ylabel("累積相対度数")
+ax2.set_ylabel("相対度数")
+ax2.set_xticks(np.linspace(0, 100, 25+1))
+
+plt.show()
