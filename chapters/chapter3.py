@@ -94,4 +94,71 @@ np.corrcoef(en_scores, ma_scores)
 
 scores_df.corr()
 
+# - - -
+#
+# ## 2次元データの視覚化
 
+import matplotlib.pyplot as plt
+# %matplotlib inline
+
+# - - -
+#
+# ### 散布図
+
+# +
+english_scores = np.array(df["英語"])
+math_scores = np.array(df["数学"])
+
+fig = plt.figure(figsize=(8, 8))
+ax = fig.add_subplot(111)
+ax.scatter(english_scores, math_scores)
+ax.set_xlabel("英語")
+ax.set_ylabel("数学")
+plt.show()
+# -
+
+# 散布図から英語の点数が高い人ほど, 数学の点数が高いという傾向がありそうに見える。
+#
+# - - -
+#
+# ### 回帰直線
+#
+# __回帰直線 (regression line)__は2つのデータ間の関係性をもっともよく表現する直線である。<br/>
+# Matplotlibには回帰直線を直線描画するメソッドがないため, ここではNumpyを用いて回帰直線を求める。
+
+# +
+poly_fit = np.polyfit(english_scores, math_scores, 1)
+poly_1d = np.poly1d(poly_fit)
+xs = np.linspace(english_scores.min(), english_scores.max())
+ys = poly_1d(xs)
+
+fig = plt.figure(figsize=(8, 8))
+ax = fig.add_subplot(111)
+ax.set_xlabel("英語")
+ax.set_ylabel("数学")
+ax.scatter(english_scores, math_scores, label="点数")
+ax.plot(xs, ys, color="gray", label=f'{poly_fit[1]:.2f}+{poly_fit[0]:.2f}x')
+ax.legend(loc="upper left")
+plt.show()
+# -
+
+# - - -
+#
+# ### ヒートマップ
+#
+# ヒストグラムの2次元版を色によって表すことができるグラフ
+
+# +
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111)
+
+c = ax.hist2d(english_scores, math_scores, bins=[9, 8], range=[(35, 80), (55, 95)])
+
+ax.set_xticks(c[1]) # 英語
+ax.set_yticks(c[2]) # 数学
+
+fig.colorbar(c[3], ax=ax)
+plt.show()
+# -
+
+# このことから英語の点数が55〜60点でかつ数学の点数が80〜85点の人がもっとも多いことがわかる

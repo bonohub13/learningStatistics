@@ -317,3 +317,6 @@ ax2.set_ylabel("相対度数")
 ax2.set_xticks(np.linspace(0, 100, 25+1))
 
 plt.show()
+# -
+
+
