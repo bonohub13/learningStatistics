@@ -9,8 +9,11 @@ function setup()
         pipenv run jupyter notebook --generate-config
     fi
 
-    echo 'c.NotebookApp.contents_manager_class = "jupytext.TextFileContentsManager"' | tee -a ~/.jupyter/jupyter_notebook_config.py
-    echo 'c.ContentsManager.default_jupytext_formats = "ipynb,py"' >> ~/.jupyter/jupyter_notebook_config.py
+    check=`grep ~/.jupyter/jupyter_notebook_config.py 'c.NotebookApp.contents_manager_class = "jupytext.TextFileContentsManager"' | grep echo 'c.ContentsManager.default_jupytext_formats = "ipynb,py"'`
+    if [[ $check = "" ]]; then
+        echo 'c.NotebookApp.contents_manager_class = "jupytext.TextFileContentsManager"' | tee -a ~/.jupyter/jupyter_notebook_config.py
+        echo 'c.ContentsManager.default_jupytext_formats = "ipynb,py"' | tee -a ~/.jupyter/jupyter_notebook_config.py
+    fi
 }
 
 function install()
