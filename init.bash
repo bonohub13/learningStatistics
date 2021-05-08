@@ -9,8 +9,9 @@ function setup()
         pipenv run jupyter notebook --generate-config
     fi
 
-    check=`grep ~/.jupyter/jupyter_notebook_config.py 'c.NotebookApp.contents_manager_class = "jupytext.TextFileContentsManager"' | grep echo 'c.ContentsManager.default_jupytext_formats = "ipynb,py"'`
-    if [[ $check = "" ]]; then
+    check1=`cat ~/.jupyter/jupyter_notebook_config.py | grep 'c.NotebookApp.contents_manager_class = "jupytext.TextFileContentsManager"'`
+    check2=`cat ~/.jupyter/jupyter_notebook_config.py | grep 'c.ContentsManager.default_jupytext_formats = "ipynb,py"'`
+    if [[ $check1 = "" ]] || [[ $check2 = "" ]]; then
         echo 'c.NotebookApp.contents_manager_class = "jupytext.TextFileContentsManager"' | tee -a ~/.jupyter/jupyter_notebook_config.py
         echo 'c.ContentsManager.default_jupytext_formats = "ipynb,py"' | tee -a ~/.jupyter/jupyter_notebook_config.py
     fi
